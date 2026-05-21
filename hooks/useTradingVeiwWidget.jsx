@@ -29,9 +29,15 @@ const useTradingViewWidget = (scriptUrl, config, height = 600) => {
       height,
     });
 
-    containerRef.current.appendChild(script);
+    script.onload = () => {
+      containerRef.current.dataset.loaded = "true";
+    };
 
-    containerRef.current.dataset.loaded = "true";
+    script.onerror = () => {
+      delete containerRef.current.dataset.loaded;
+    };
+
+    containerRef.current.appendChild(script);
 
     return () => {
       if (containerRef.current) {
