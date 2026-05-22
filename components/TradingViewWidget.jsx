@@ -15,7 +15,7 @@ function TradingViewWidget({
   return (
     <div className="w-full">
       {title && (
-        <h3 className="font-semibold text-2xltext-gray-100 mb-5">{title}</h3>
+        <h3 className="font-semibold text-2xl text-gray-100 mb-5">{title}</h3>
       )}
       <div
         className={`tradingview-widget-container ${className}`}
