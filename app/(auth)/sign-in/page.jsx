@@ -2,11 +2,16 @@
 
 import FooterLink from "@/components/forms/FooterLink";
 import InputField from "@/components/forms/InputField";
+import { signInWithEmail } from "@/lib/actions/auth.actions";
 
 import { Button } from "@base-ui/react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 const SignIn = () => {
+  const router = useRouter();
+
   const {
     register,
     handleSubmit,
@@ -21,9 +26,21 @@ const SignIn = () => {
 
   const onSubmit = async (data) => {
     try {
-      console.log(data);
-    } catch (e) {
-      console.error(e);
+      const result = await signInWithEmail(data);
+
+      if (result.success) {
+        toast.success("Signed in successfully");
+        router.push("/");
+      } else {
+        toast.error(result.error || "Sign in failed");
+      }
+    } catch (error) {
+      console.error(error);
+
+      toast.error("Sign in failed", {
+        description:
+          error instanceof Error ? error.message : "Failed to sign in",
+      });
     }
   };
 

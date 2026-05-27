@@ -4,15 +4,20 @@ import { CountrySelectField } from "@/components/forms/CountrySelectField";
 import FooterLink from "@/components/forms/FooterLink";
 import InputField from "@/components/forms/InputField";
 import SelectField from "@/components/forms/SelectField";
+import { signUpWithEmail } from "@/lib/actions/auth.actions";
 import {
   INVESTMENT_GOALS,
   PREFERRED_INDUSTRIES,
   RISK_TOLERANCE_OPTIONS,
 } from "@/lib/constants";
 import { Button } from "@base-ui/react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 const SignUp = () => {
+  const router = useRouter();
+
   const {
     register,
     handleSubmit,
@@ -33,9 +38,23 @@ const SignUp = () => {
 
   const onSubmit = async (data) => {
     try {
-      console.log(data);
-    } catch (e) {
-      console.error(e);
+      const result = await signUpWithEmail(data);
+
+      if (result.success) {
+        toast.success("Account created successfully");
+        router.push("/");
+      } else {
+        toast.error(result.error || "Sign up failed");
+      }
+    } catch (error) {
+      console.error(error);
+
+      toast.error("Sign up failed", {
+        description:
+          error instanceof Error
+            ? error.message
+            : "Failed to create an account",
+      });
     }
   };
 
@@ -52,7 +71,13 @@ const SignUp = () => {
           placeholder="John Doe"
           register={register}
           error={errors.fullName}
-          validation={{ required: "Full name is required", minLength: 2 }}
+          validation={{
+            required: "Full name is required",
+            minLength: {
+              value: 2,
+              message: "Minimum 2 characters",
+            },
+          }}
         />
 
         <InputField
@@ -63,8 +88,10 @@ const SignUp = () => {
           error={errors.email}
           validation={{
             required: "Email is required",
-            pattern: /^w+@\w+\.\w+$/,
-            message: "Enter a valid email address",
+            pattern: {
+              value: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
+              message: "Enter a valid email address",
+            },
           }}
         />
 
@@ -75,7 +102,13 @@ const SignUp = () => {
           type="password"
           register={register}
           error={errors.password}
-          validation={{ required: "Password is required", minLength: 6 }}
+          validation={{
+            required: "Password is required",
+            minLength: {
+              value: 8,
+              message: "Minimum 8 characters",
+            },
+          }}
         />
 
         {/* Country */}
