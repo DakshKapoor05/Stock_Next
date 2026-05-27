@@ -105,8 +105,8 @@ const SignUp = () => {
           validation={{
             required: "Password is required",
             minLength: {
-              value: 6,
-              message: "Minimum 6 characters",
+              value: 8,
+              message: "Minimum 8 characters",
             },
           }}
         />
